@@ -1,0 +1,28 @@
+name: Kiểm tra Code Tự Động (CI)
+
+# 1. Khi nào thì chạy?
+on:
+  push:
+    branches: [ "main" ] # Chạy khi có code đẩy lên nhánh main
+  pull_request:
+    branches: [ "main" ] # Chạy khi ai đó tạo yêu cầu gộp code vào main
+
+# 2. Chạy cái gì?
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest # Robot chạy trên hệ điều hành Ubuntu ảo
+
+    steps:
+    - name: Lấy code từ GitHub về máy ảo
+      uses: actions/checkout@v4
+
+    - name: Cài đặt Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Cài đặt các thư viện (Dependencies)
+      run: npm install
+
+    - name: Chạy các bài kiểm tra (Unit Test)
+      run: npm test
