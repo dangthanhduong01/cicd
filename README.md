@@ -123,17 +123,7 @@ Push code lên GitHub và CI/CD sẽ tự động:
 **Username:** admin  
 **Password:** password123
 
-⚠️ **Lưu ý:** Đây chỉ là demo. Trong production, hãy sử dụng database và JWT token thật.
-
 ## 🔧 Environment Variables
 
 - `PORT`: Port để chạy server (default: 8080)
 
-## 📦 Dependencies
-
-- [Gin](https://github.com/gin-gonic/gin) - HTTP web framework
-- Go 1.21+
-
-## 📄 License
-
-MIT License
