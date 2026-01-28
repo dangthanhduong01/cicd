@@ -1,0 +1,69 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Build
+        run: go build -v ./...
+
+      - name: Run tests
+        run: go test -v ./...
+
+      - name: Check code formatting
+        run: |
+          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+            echo "Code is not formatted properly"
+            gofmt -s -l .
+            exit 1
+          fi
+
+  deploy:
+    name: Trigger Render Deploy
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Deploy to Render
+        run: |
+          echo "✅ Build successful! Render will auto-deploy from GitHub."
+          echo "🚀 Check your Render dashboard for deployment status."
+
+      - name: Deployment notification
+        run: |
+          echo "================================================"
+          echo "🎉 Deployment triggered successfully!"
+          echo "📦 Branch: main"
+          echo "🔗 Render will automatically deploy your app"
+          echo "⏱️  Deployment usually takes 2-5 minutes"
+          echo "================================================"
